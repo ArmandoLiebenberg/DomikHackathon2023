@@ -118,6 +118,7 @@ function preload() {
     'Nuke': loadImage('res/Nuke.png'),
     'Dynamite': loadImage('res/Dynamite.png')
   }  
+  side_screen =  loadImage('res/background.png')
   img_names = ['Gun', 'Rock', 'Sun', 'Fiya', 'Scissors', 'Axe', 'Snake', 'Monkey', 'Woman', 'Man', 'Tree', 'Cockroach', 'Wolf', 
   'Sponge', 'Paper', 'Moon', 'Air', 'Bowl', 'Water', 'Alien', 'Dragon', 'Devil', 'Lightning', 'Nuke', 'Dynamite'];
   bcolour = color(Math.floor(random(255)),Math.floor(random(255)),Math.floor(random(255))) 
@@ -141,17 +142,17 @@ function setup() {
   let title = createDiv('<h1>Choose Your Fighters</h1>');
   title.position(canvasx+30, 0);
   let colour_selection = createDiv('<p>Background: </p>')
-  colour_selection.position(canvasx+50, 100);
+  colour_selection.position(canvasx+50, 95);
   let shape_selection = createDiv('<p>Fighters: </p>')
-  shape_selection.position(canvasx+210, 100);
+  shape_selection.position(canvasx+210, 95);
   let speed_selection = createDiv('<p>Speed: </p>')
   speed_selection.position(canvasx+60, 55);
   colorPicker = createColorPicker(bcolour);
-  colorPicker.position(canvasx+135, 110);
+  colorPicker.position(canvasx+135, 105);
   selector = []
   var box_pic = 0
-  for (var y = 150; y < 451; y += 300/ 5) {
-    for (var x = canvasx+30; x < canvasx+331; x += 300 / 5) {
+  for (var y = 175; y < 476; y += 300/ 5) {
+    for (var x = canvasx+25; x < canvasx+326; x += 300 / 5) {
       if ((box_pic<imageList.length)*(x<canvasx+301)) {
         rect(x,y,60,60)
         imageList[box_pic]
@@ -165,7 +166,7 @@ function setup() {
   button.mousePressed(new_sprites)
   shape = createInput(shapes)
   shape.size(25);
-  shape.position(canvasx+270,115)
+  shape.position(canvasx+270,110)
   shape.input(shape_input)
   speeds = createSlider(0.1, 2.5, speed, 0.1)
   speeds.position(canvasx+105, 70);
@@ -187,6 +188,7 @@ function new_sprites() {
 function draw() {
   speed = speeds.value();
   background(120);
+  image(side_screen,canvasx,0);
   pg.background(colorPicker.color());
   bcolour = colorPicker.color()
   image(pg, 0, 0);
@@ -197,8 +199,8 @@ function draw() {
     sprite_list[i].set_position(move(sprite_list[i]))
   }
   var box_pic = 0
-  for (var y = 150; y < 451; y += 300/ 5) {
-    for (var x = canvasx+30; x < canvasx+331; x += 300 / 5) {
+  for (var y = 175; y < 476; y += 300/ 5) {
+    for (var x = canvasx+25; x < canvasx+326; x += 300 / 5) {
       if ((box_pic<imageList.length)*(x<canvasx+301)) {
         if (img_names.includes(imageList[box_pic])) {
           fill(120);
@@ -213,8 +215,8 @@ function draw() {
       }
       stroke(0);
       strokeWeight(1);
-      line(x, 150, x, 450);
-      line(canvasx+30, y, canvasx+330, y);
+      line(x, 175, x, 475);
+      line(canvasx+25, y, canvasx+325, y);
     }
   }
 }
