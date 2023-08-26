@@ -1,7 +1,9 @@
 ims = ['Rock', 'Paper', 'Scissors']
 
-image = ['Gun', 'Rock', 'Sun', 'Fiya', 'Scissors', 'Axe', 'Snake', 'Monkey', 'Woman', 'Man', 'Tree', 'Cockroach', 'Wolf', 
-'Sponge', 'Paper', 'Moon', 'Air', 'Bowl', 'Water', 'Alien', 'Dragon', 'Devil', 'Lightning', 'Nuke', 'Dynamite']
+imageList = ['Gun', 'Rock','Sun', 'Fiya', 'Scissors','Snake', 'Tree', 'Wolf', 
+'Sponge', 'Paper', 'Bowl', 'Alien', 'Lightning', 'Nuke', 'Dynamite'];/*
+['Gun', 'Rock', 'Sun', 'Fiya', 'Scissors', 'Axe', 'Snake', 'Monkey', 'Woman', 'Man', 'Tree', 'Cockroach', 'Wolf', 
+'Sponge', 'Paper', 'Moon', 'Air', 'Bowl', 'Water', 'Alien', 'Dragon', 'Devil', 'Lightning', 'Nuke', 'Dynamite'] */
 
 Beats = {'Gun': ['Rock', 'Sun', 'Fiya', 'Scissors', 'Axe', 'Snake', 'Monkey', 'Woman', 'Man', 'Tree', 'Cockroach', 'Wolf'],
   'Rock': ['Sun', 'Fiya', 'Scissors', 'Axe', 'Snake', 'Monkey', 'Woman', 'Man', 'Tree', 'Cockroach', 'Wolf', 'Sponge'],
@@ -60,7 +62,6 @@ Beats = {'Gun': ['Rock', 'Sun', 'Fiya', 'Scissors', 'Axe', 'Snake', 'Monkey', 'W
     }
 
     set_position([x,y]) {
-      //console.log[x]
       this._x = x;
       this._y = y;
     }
@@ -98,41 +99,86 @@ function preload() {
     'Sun': loadImage('res/Sun.png'),
     'Fiya': loadImage('res/Fiya.png'),
     'Scissors': loadImage('res/Scissors.png'),
-    'Axe': loadImage('res/Axe.png'),
+    //'Axe': loadImage('res/Axe.png'),
     'Snake': loadImage('res/Snake.png'),
-    'Monkey': loadImage('res/Monkey.png'),
-    'Woman': loadImage('res/Woman.png'),
-    'Man': loadImage('res/Man.png'),
+    //'Monkey': loadImage('res/Monkey.png'),
+    //'Woman': loadImage('res/Woman.png'),
+    //'Man': loadImage('res/Man.png'),
     'Tree': loadImage('res/Tree.png'),
-    'Cockroach': loadImage('res/Cockroach.png'),
+    //'Cockroach': loadImage('res/Cockroach.png'),
     'Wolf': loadImage('res/Wolf.png'),
     'Sponge': loadImage('res/Sponge.png'),
     'Paper': loadImage('res/Paper.png'),
-    'Moon': loadImage('res/Moon.png'),
-    'Air': loadImage('res/Air.png'),
+    //'Moon': loadImage('res/Moon.png'),
+    //'Air': loadImage('res/Air.png'),
     'Bowl': loadImage('res/Bowl.png'),
-    'Water': loadImage('res/Water.png'),
+    //'Water': loadImage('res/Water.png'),
     'Alien': loadImage('res/Alien.png'),
-    'Dragon': loadImage('res/Dragon.png'),
-    'Devil': loadImage('res/Devil.png'),
+    //'Dragon': loadImage('res/Dragon.png'),
+    //'Devil': loadImage('res/Devil.png'),
     'Lightning': loadImage('res/Lightning.png'),
     'Nuke': loadImage('res/Nuke.png'),
     'Dynamite': loadImage('res/Dynamite.png')
-  }   
+  }  
+  img_names = ['Gun', 'Rock','Sun', 'Fiya', 'Scissors','Snake', 'Tree', 'Wolf', 
+  'Sponge', 'Paper', 'Bowl', 'Alien', 'Lightning', 'Nuke', 'Dynamite'];
+  bcolour = color(Math.floor(random(255)),Math.floor(random(255)),Math.floor(random(255))) 
 }
 
 var sprite_list;
 let table;
+let pg;
+var shapes = 15;
+var speed = 1;
 
 function setup() {
-  shapes = 100;
-  img_names = ['Rock','Paper','Scissors'];
   for (const i of img_names) {
     images[i].loadPixels()
   }
   canvasx = 700
-  canvasy = 500
-  createCanvas(canvasx, canvasy);
+  canvasy = 540
+  createCanvas(canvasx+400, canvasy);
+  pg = createGraphics(canvasx, canvasy);
+  new_sprites()
+  let title = createDiv('<h1>Choose Your Fighters</h1>');
+  title.position(canvasx+30, 0);
+  let colour_selection = createDiv('<p>Background: </p>')
+  colour_selection.position(canvasx+30, 70);
+  let shape_selection = createDiv('<p>Fighters: </p>')
+  shape_selection.position(canvasx+170, 70);
+  let speed_selection = createDiv('<p>Speed: </p>')
+  speed_selection.position(canvasx+260, 70);
+  colorPicker = createColorPicker(bcolour);
+  colorPicker.position(canvasx+115, 80);
+  selector = []
+  var box_pic = 0
+  for (var y = 120; y < 451; y += 360/ 6) {
+		for (var x = canvasx+30; x < canvasx+331; x += 300 / 5) {
+      if ((box_pic<imageList.length)*(x<canvasx+301)) {
+        rect(x,y,60,60)
+        imageList[box_pic]
+        selector.push([[x+30,y+30], imageList[box_pic]])
+        box_pic += 1
+      }
+      else if ((box_pic==imageList.length)*(x<canvasx+301)) {
+        box_pic += 1
+        selector.push([[x+30,y+30], '+'])
+      }
+		}
+  }
+  button = createButton('Rematch');
+  button.position(canvasx+331, 32);
+  button.mousePressed(new_sprites)
+  shape = createInput(shapes)
+  shape.size(15);
+  shape.position(canvasx+230,85)
+  shape.input(shape_input)
+  speeds = createSlider(0.1, 2.5, speed, 0.1)
+  speeds.position(canvasx+305, 85);
+  speeds.style('width', '80px');
+}
+
+function new_sprites() {
   sprite_list = []
   for (let j = 0; j<img_names.length; j++) {
     sprite_name = img_names[j]
@@ -141,48 +187,55 @@ function setup() {
       sprite_list.push(new Sprite(img,sprite_name,random(10,canvasx-10),random(10,canvasy-10)))
     }
   }
-  let title = createDiv('<h1>Let the Games Begin.</h1>');
-  title.position(canvasx+30, 0);
-  let colour_selection = createDiv('<p>Choose Background: </p>')
-  colour_selection.position(canvasx+30, 70);
-  colorPicker = createColorPicker('#' + Math.floor(random(16777215)).toString(16));
-  colorPicker.position(canvasx+180, 80);
-/*
-  row1 = new p5.TableRow('Gun, Dynamite, Nuke, Lightning, Devil', ',');
-  row2 = new p5.TableRow('Dragon, Alien, Water, Bowl, Air', ',');
-  row3 = new p5.TableRow('Moon, Paper, Sponge, Wolf, Cockroach', ',');
-  row4 = new p5.TableRow('Tree, Man, Woman, Monkey,Snake', ',');
-  row5 = new p5.TableRow('Axe,Scissors,Fiya,Sun,Rock', ',');
-  row6 = new p5.TableRow('+, , , , ', ',')
-
-  table = new p5.Table([row1,row2,row3,row4,row5, row6]);
-  drawTable(table)
-*/
 }
 
 
 function draw() {
-  background(colorPicker.color());
-  for (let i=0; i<(shapes*img_names.length); i++) {
+  speed = speeds.value();
+  background(120);
+  pg.background(colorPicker.color());
+  bcolour = colorPicker.color()
+  image(pg, 0, 0);
+  for (let i=0; i<(sprite_list.length); i++) {
     type = sprite_list[i].type;
     [x,y] = sprite_list[i].position;
     image(type, x, y, 20, 20)
     sprite_list[i].set_position(move(sprite_list[i]))
   }
-  /*
-  for (var x = canvasx+30; x < canvasx+150; x += 120 / 6) {
-		for (var y = 100; y < 220; y += 120/ 6) {
+  var box_pic = 0
+  for (var y = 120; y < 481; y += 360/ 6) {
+		for (var x = canvasx+30; x < canvasx+331; x += 300 / 5) {
+      if ((box_pic<imageList.length)*(x<canvasx+301)) {
+        if (img_names.includes(imageList[box_pic])) {
+          fill(120);
+          rect(x,y,60,60)
+        }
+        else {
+          fill(200,50,50);
+          rect(x,y,60,60)
+        }
+        image(images[imageList[box_pic]], x+5, y+5, 50, 50)
+        box_pic += 1
+      }
+      else if ((box_pic==imageList.length)*(x<canvasx+301)) {
+        let plus = createDiv('<h1>+</h1>');
+        plus.position(x+29, y-1);
+        box_pic += 1
+      }
 			stroke(0);
 			strokeWeight(1);
-			line(x, 100, x, 200);
-			line(canvasx+30, y, canvasx+130, y);
+			line(x, 120, x, 480);
+			line(canvasx+30, y, canvasx+330, y);
 		}
-	}
-  */
+  }
+}
+
+function shape_input() {
+  shapes = parseInt(this.value())
+  console.log(shapes+2)
 }
 
 function move(sprite) {
-  speed = 0.8;
   [x,y] = sprite.position;
   var prey_pos = sprite.nearest_prey(sprite_list);
   var prey_x = prey_pos[0];
@@ -190,34 +243,49 @@ function move(sprite) {
   if ((prey_y==y)*(prey_x==x)) {
     x += (random(-4,4)/5)
     y += (random(-4,4)/5)
-    return[x,y]
-  }
-  if (prey_y != y) {
-    frac = (prey_x-x)/(prey_y-y);
   }
   else {
-    frac = (prey_x-x)/(0.0000000000000001);
+    if (prey_y !== y) {
+      frac = (prey_x-x)/(prey_y-y);
+    }
+    else {
+      frac = (prey_x-x)/(0.0000000000000001);
+    }
+    if (y < prey_y) {
+      x += (Math.sin(Math.atan(frac)))*(random(-1,2)*speed)
+      y += (Math.cos(Math.atan(frac)))*(random(-1,2)*speed)
+    } else {
+      x -= (Math.sin(Math.atan(frac)))*(random(-1,2)*speed)
+      y -= (Math.cos(Math.atan(frac)))*(random(-1,2)*speed)
+    }
   }
-  if (y < prey_y) {
-    x += (Math.sin(Math.atan(frac)))*(random(-1,2)*speed)
-    y += (Math.cos(Math.atan(frac)))*(random(-1,2)*speed)
-  } else {
-    x -= (Math.sin(Math.atan(frac)))*(random(-1,2)*speed)
-    y -= (Math.cos(Math.atan(frac)))*(random(-1,2)*speed)
-  }
-  // x += (Math.sin(Math.atan(frac)))*(random(-1,2)/5)
-  // y += (Math.cos(Math.atan(frac)))*(random(-1,2)/5)
   if (x<10) {
     x=10
   }
-  else if (x>canvasx-20) {
+  if (x>canvasx-20) {
     x = canvasx-20
   }
   if (y<10) {
     y=10
   }
-  else if (y>canvasy-20) {
+  if (y>canvasy-20) {
     y = canvasy-20
   }
   return[x,y]
+}
+
+function mousePressed() {
+  for (var i=0; i<imageList.length; i++) {
+    x = selector[i][0][0]
+    y = selector[i][0][1]
+    if ((abs(mouseX-x)<30)*(abs(mouseY-y)<30)) {
+      type = selector[i][1]
+      if (img_names.includes(type)) {
+        img_names = img_names.filter(function(e) {return e !== type})
+      }
+      else {
+        img_names.push(type)
+      }
+    }
+  }
 }
